@@ -1,0 +1,21 @@
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato" />
+<div *ngIf="!hasError else errorfield" style="padding: 20px;" class="form-group">
+    <mat-form-field floatLabel="{{floatLabelValue}}" class="block" appearance="outline">
+        <mat-label  style="font-family: Lato !important; font-size: 16px;">{{label}}</mat-label>
+        <input value={{inputText}} *ngIf="FormControlName else notinform" [formControl]="FormControlName" matInput type={{type}} placeholder={{placeholder}}/>
+        <ng-template #notinform>
+            <input type="text" [disabled]="isDisabled" value={{inputText}} matInput placeholder={{placeholder}}>
+        </ng-template>
+        <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+        <mat-error> {{errorMessage}} </mat-error>
+    </mat-form-field>
+</div>
+<ng-template #errorfield>
+    <div [formGroup] = "errorForm" style="padding: 20px;">
+    <mat-form-field floatLabel="{{floatLabelValue}}" class="block" appearance="outline">
+        <mat-label  style="font-family: Lato !important; font-size: 16px;">{{label}}</mat-label>
+        <input formControlName="inputField" matInput type="text"/>
+        <mat-error> {{errorMessage}} </mat-error>
+    </mat-form-field>
+    </div>
+</ng-template>

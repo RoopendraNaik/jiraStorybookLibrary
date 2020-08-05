@@ -28,6 +28,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -92,6 +93,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -156,6 +158,46 @@
             "tsConfig": [
               "projects/button/tsconfig.lib.json",
               "projects/button/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "text-input": {
+      "projectType": "library",
+      "root": "projects/text-input",
+      "sourceRoot": "projects/text-input/src",
+      "prefix": "ui",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/text-input/tsconfig.lib.json",
+            "project": "projects/text-input/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/text-input/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/text-input/src/test.ts",
+            "tsConfig": "projects/text-input/tsconfig.spec.json",
+            "karmaConfig": "projects/text-input/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/text-input/tsconfig.lib.json",
+              "projects/text-input/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
