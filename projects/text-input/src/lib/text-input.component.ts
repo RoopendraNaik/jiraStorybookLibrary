@@ -1,68 +1,84 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Input, Injector, forwardRef } from '@angular/core';
+import {
+  NgControl,
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+} from '@angular/forms';
+import { noop } from 'rxjs';
 
 @Component({
   selector: 'ui-text-input',
   templateUrl: './text-input.component.html',
-  styleUrls: ['./text-input.component.scss']
+  styleUrls: ['./text-input.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => TextInputComponent),
+      multi: true,
+    },
+  ],
 })
-export class TextInputComponent implements OnInit {
-  @Input() placeholder = "";
-  @Input() label = "Label";
-  @Input() type = "text";
-  @Input() FormControlName: FormControl;
-  @Input() errorMessage = "This field is required";
-  @Input() hint: string;
-  @Input() floatLabelValue = "never";
-  // @Input() inputText = "";
-  // @Input() isDisabled = false;
-  // @Input() hasError: boolean;
-  @Input() state;
-  inputText: string;
-  isDisabled: boolean;
-  hasError: boolean;
+export class TextInputComponent implements ControlValueAccessor, OnInit {
+  @Input()
+  placeholder = '';
 
-  errorForm: FormGroup;
-  constructor(private fb: FormBuilder) {
-    this.errorForm = this.fb.group({
-      inputField: ['', Validators.required]
-    })
-  }
+  @Input()
+  label = 'Label';
 
-  markFormGroupTouched(formGroup: FormGroup) {
-    (<any>Object).values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
+  @Input()
+  type = 'text';
 
-      if (control.controls) {
-        this.markFormGroupTouched(control);
-      }
-    });
-  }
+  @Input()
+  errorMessage = 'This field is required';
 
+  @Input()
+  hint: string;
+
+  @Input()
+  floatLabelValue = 'never';
+
+  @Input()
+  state;
+
+  @Input()
+  disabled = false;
+
+  inputText: string | number;
+
+  ngControl: NgControl;
+
+  private onTouched: () => void = noop;
+  private onChange: (_: any) => void = noop;
+
+  constructor(private inj: Injector) {}
 
   ngOnInit(): void {
+    this.ngControl = this.inj.get(NgControl);
+  }
 
-    console.log('---state is');
-    console.log(this.state);
-    switch(this.state){
-      case 'Focused with Input':
-        this.inputText = "Input Text";
-        break;
-      case 'Disabled':
-          this.isDisabled = true;
-          if(this.FormControlName) this.FormControlName.disable();
-          break;
-      case 'Focused Error':
-        this.hasError = true;
-        this.floatLabelValue = "always";
-        break;
-      case 'Default Error':
-          this.hasError = true;
-          break;
-    }
+  writeValue(newModel: string | number): void {
+    this.inputText = newModel;
+  }
 
-    if(this.hasError){
-      this.markFormGroupTouched(this.errorForm);
-    }
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  onInputChange($event: any): void {
+    const value = $event.target.value;
+    this.inputText = value;
+    this.onChange(value);
+  }
+
+  inputBlur($event): void {
+    this.onTouched();
   }
 }
